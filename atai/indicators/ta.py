@@ -1,3 +1,2 @@
-
 def sample(self):
     pass
