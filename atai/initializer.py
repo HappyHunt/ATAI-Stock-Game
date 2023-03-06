@@ -4,17 +4,22 @@ import pymongo
 
 
 class Init:
-    def __init__(self):
+    def __init__(self, config_filepath : str) -> None:
+        # Config file read
         self._config = configparser.ConfigParser()
-        self._config.read('venv/config.ini')
+        self._config.read(config_filepath)
 
-        # Odczytanie zmiennych
+        # Config variables read
+        #   Database
         self._server = self._config.get('DATABASE', 'server')
         self._database = self._config.get('DATABASE', 'database')
+
+        #   Kucoin API
         self._api_key = self._config.get('KUCOIN', 'api_key')
         self._api_secret = self._config.get('KUCOIN', 'api_secret')
         self._api_passphrase = self._config.get('KUCOIN', 'api_passphrase')
-        #Incijalizacja połączeń
+
+        # Connections init
         self._client = pymongo.MongoClient(self._server)
         self._kucoin_client = Trade(self._api_key, self._api_secret, self._api_passphrase)
         self._db = self._client[self._database]
