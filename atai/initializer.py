@@ -1,11 +1,12 @@
 import configparser
 import pymongo
 from kucoin_futures.client import Trade
+from kucoin_futures.client import Market
 from pathlib import Path
 
 
 class Init:
-    def __init__(self, config_filepath : str) -> None:
+    def __init__(self, config_filepath: str) -> None:
         # Config file read
         #   Config file existance check
         path = Path(config_filepath)
@@ -40,13 +41,14 @@ class Init:
             raise ConnectionError(f"MongoDB : server is not available at mongodb://{self._server[0]}:{self._server[1]}/")
         
         #   Kucoin API
-        self._kucoin_client = Trade(self._api_key, self._api_secret, self._api_passphrase)
-
-
+        self._kucoin_client_trade = Trade(self._api_key, self._api_secret, self._api_passphrase)
+        self._kucoin_client_market = Market(url='https://api-futures.kucoin.com')
 
     def get_db(self):
         return self._db
 
+    def get_kucoin_client_trade(self) -> Trade:
+        return self._kucoin_client_trade
 
-    def get_kucoin_client(self) -> Trade:
-        return self._kucoin_client
+    def get_kucoin_client_market(self) -> Market:
+        return self._kucoin_client_market

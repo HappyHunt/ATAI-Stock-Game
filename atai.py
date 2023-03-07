@@ -1,5 +1,7 @@
 import sys
 import uvicorn
+import threading
+from atai.kucoin_client import (KucoinClient, bg_thread_work)
 from configparser import NoOptionError
 from fastapi import FastAPI
 from atai.views import sample_view
@@ -7,19 +9,20 @@ from atai.initializer import Init
 
 
 # App Config globals
-CONFIG_FILE = './config_legit.ini'
+CONFIG_FILE = './venv/config.ini'
 HOST = '127.0.0.1'
 PORT = 8000
 
 
 # DB, Kucoin API client inits
 def init() -> bool:
-    global db, kucoin
+    global db, trade, market
 
     try:
-        init = Init(CONFIG_FILE)
-        db = init.get_db()
-        kucoin = init.get_kucoin_client()
+        initializer = Init(CONFIG_FILE)
+        db = initializer.get_db()
+        trade = initializer.get_kucoin_client_trade()
+        market = initializer.get_kucoin_client_market()
 
     #   Config file does not exists
     except FileNotFoundError as e:
@@ -35,6 +38,7 @@ def init() -> bool:
         print(f'\t{e}')
         return False
 
+    #   Database Connection refused
     except ConnectionError as e:
         print('--- INIT EXCEPTION ---')
         print(' -- MongoDB Connection --')
@@ -51,6 +55,7 @@ def init() -> bool:
     
     return True
 
+
 # Main Drive
 def main():
     global app
@@ -60,7 +65,15 @@ def main():
     app.include_router(sample_view.router)
 
     # DB, Kucoin API client inits
-    if not init(): sys.exit(1)
+    if not init():
+        sys.exit(1)
+
+    # Background collector thread
+    kucoin_client = KucoinClient(trade=trade, market=market, db=db)
+    KucoinClient.client = kucoin_client
+
+    t = threading.Thread(target=bg_thread_work, args=(kucoin_client,), daemon=True)
+    t.start()
 
     # App Run
     uvicorn.run(app, host=HOST, port=PORT)

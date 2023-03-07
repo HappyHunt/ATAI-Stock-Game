@@ -4,8 +4,9 @@ class Collector:
     '''
 
     # Constuctor
-    def __init__(self) -> None:
-        pass
+    def __init__(self, name: str, timeframe: str) -> None:
+        self.name = name
+        self.timeframe = timeframe
     
     # Destructor
     def __del__(self) -> None:
@@ -29,3 +30,7 @@ class Collector:
         # Return data
         return data
     '''
+
+
+
+
