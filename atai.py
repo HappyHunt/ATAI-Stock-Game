@@ -9,7 +9,7 @@ from atai.initializer import Init
 
 
 # App Config globals
-CONFIG_FILE = './venv/config.ini'
+CONFIG_FILE = './config.ini'
 HOST = '127.0.0.1'
 PORT = 8000
 

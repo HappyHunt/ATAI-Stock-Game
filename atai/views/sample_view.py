@@ -19,7 +19,13 @@ async def contract_list():
     return KucoinClient.client.kucoin_client_market.get_contracts_list()
 
 
-@router.get("/aaa")
-async def contract_list():
-    return KucoinClient.client.kucoin_client_market.get_kline_data(".KXBTUSDT", 1)
-
+@router.get("/crypto/{name}/{timeframe}")
+async def crypto(name: str, timeframe: int):
+    if timeframe in [1, 5, 15, 60]:
+        if name.lower() == 'btc':
+            return KucoinClient.client.kucoin_client_market.get_kline_data("XBTUSDTM", timeframe)
+        elif name.lower() == 'eth':
+            return KucoinClient.client.kucoin_client_market.get_kline_data("ETHUSDTM", timeframe)
+    
+    return {"code" : "400001",
+            "msg" : "Invalid Input"}        

@@ -44,6 +44,7 @@ class Init:
         self._kucoin_client_trade = Trade(self._api_key, self._api_secret, self._api_passphrase)
         self._kucoin_client_market = Market(url='https://api-futures.kucoin.com')
 
+
     def get_db(self):
         return self._db
 
