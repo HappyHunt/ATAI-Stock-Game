@@ -1,2 +1,2 @@
-def sample(self):
+def sma():
     pass
