@@ -9,7 +9,7 @@ from atai.initializer import Init
 
 
 # App Config globals
-CONFIG_FILE = './config.ini'
+CONFIG_FILE = './venv/config.ini'
 HOST = '127.0.0.1'
 PORT = 8000
 
@@ -76,7 +76,7 @@ def main():
     t.start()
 
     # App Run
-    uvicorn.run(app, host=HOST, port=PORT)
+    uvicorn.run(app, host=HOST, port=PORT, reload=True)
 
 
 if __name__ == '__main__':

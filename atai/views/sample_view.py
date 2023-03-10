@@ -16,7 +16,8 @@ async def say_hello(name: str):
 
 @router.get("/contract-list")
 async def contract_list():
-    return KucoinClient.client.kucoin_client_market.get_contracts_list()
+    data = KucoinClient.client.kucoin_client_market.get_contracts_list()
+    return data
 
 
 @router.get("/crypto/{name}/{timeframe}")
