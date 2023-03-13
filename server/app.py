@@ -6,13 +6,8 @@ import routes.root as root
 import routes.trader as trader
 import routes.marketer as marketer
 
-CONFIG_FILEPATH = '/home/bszyk/Projects/ATAI-Stock-Game/server/config.ini'
-
 
 def main():
-    # DB Init
-    db = database.db.DatabaseMongo(CONFIG_FILEPATH)
-
     # API Init
     app = FastAPI()
     #   * Routers

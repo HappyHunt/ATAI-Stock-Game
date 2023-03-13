@@ -1,7 +1,6 @@
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 
-
 router_trade = APIRouter()
 
 @router_trade.get("/trader/", tags=["Trade"])

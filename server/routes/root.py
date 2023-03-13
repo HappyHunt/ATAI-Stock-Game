@@ -1,7 +1,6 @@
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 
-
 router_root = APIRouter()
 
 @router_root.get("/", tags=["Root"])

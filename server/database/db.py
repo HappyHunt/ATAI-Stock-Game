@@ -1,31 +1,48 @@
 import motor.motor_asyncio
 import configparser as cfg
 
-from models.candle import TIMEFRAMES, CRYPTO_CURRENCIES
+CONFIG_FILEPATH = '/home/bszyk/Projects/ATAI-Stock-Game/server/config.ini'
+
+# Config handle
+#   * Open
+config = cfg.ConfigParser()
+config.read(CONFIG_FILEPATH)
+
+#   * Read
+DB_SRV_ADDR = config.get('DATABASE', 'server_addr')
+DB_SRV_PORT = config.get('DATABASE', 'server_port')
+DB_NAME = config.get('DATABASE', 'db_name')
+
+# Mongo DB
+
+MONGO_DETAILS = f"mongodb://{DB_SRV_ADDR}:{DB_SRV_PORT}"
+
+#   * Connect
+client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DETAILS)
+
+#   * Database
+database = client[DB_NAME]
+
+# *** Collections ***
+def get_collection(currency: str, timeframe: int):
+    return database.get_collection(f'{currency}.{timeframe}')
 
 
-class DatabaseMongo:
-    def __init__(self, config_filepath: str) -> None:
+# *** Helpers ***
+def candle_helper(candle) -> dict:
+    return {
+        "id": str(candle["_id"]),
+        "timestamp": candle["timestamp"],
+        "entry_price": candle["entry_price"],
+        "highest_price": candle["highest_price"],
+        "lowest_price": candle["lowest_price"],
+        "close_price": candle["close_price"],
+        "volume": candle["volume"],
+    }
 
-        # Config handle
-        #   * Open
-        self._config = cfg.ConfigParser()
-        self._config.read(config_filepath)
-
-        #   * Read
-        self._db_srv_addr = self._config.get('DATABASE', 'server_addr')
-        self._db_srv_port = self._config.get('DATABASE', 'server_port')
-        self._db_name = self._config.get('DATABASE', 'db_name')
-
-        # Mongo DB
-        mongo_details = f"mongodb://{self._db_srv_addr}:{self._db_srv_port}"
-
-        #   * Connect
-        self._client = motor.motor_asyncio.AsyncIOMotorClient(mongo_details)
-
-        #   * Database
-        self._db = self._client[self._db_name]
-
-
-    def get_collection(self, currency: str, timeframe: int):
-        return self._db.get_collection(f'{currency}.{timeframe}')
+# *** Add ***
+async def add_candle(candle_data: dict, currency: str, timeframe: int) -> dict:
+    collection = get_collection(currency, timeframe)
+    candle = await collection.insert_one(candle_data)
+    new_candle = await collection.find_one({"_id": candle.inserted_id})
+    return candle_helper(new_candle)
