@@ -1,5 +1,7 @@
 from urllib.parse import urlencode
+
 from .error import ParameterRequiredError
+
 
 def cleanNoneValue(d) -> dict:
     out = {}
