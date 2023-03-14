@@ -1,5 +1,5 @@
+from typing import List
 from pydantic import BaseModel, Field
-
 
 
 class CandlestickSchema(BaseModel):
@@ -21,3 +21,7 @@ class CandlestickSchema(BaseModel):
                 "volume": 70653,
             }
         }
+
+
+class CandlestickSchemaList(BaseModel):
+    candles: List[CandlestickSchema] = Field(...)
