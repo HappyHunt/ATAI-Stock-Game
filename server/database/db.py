@@ -31,6 +31,7 @@ def get_collection(currency: str, timeframe: str):
 
 # *** Helpers ***
 def candle_helper(candle) -> dict:
+    # Convert candle document obj to dict
     return {
         "id": str(candle["_id"]),
         "timestamp": candle["timestamp"],
@@ -42,8 +43,18 @@ def candle_helper(candle) -> dict:
     }
 
 # *** Add ***
-async def add_candle(candle_data: dict, currency: str, timeframe: str) -> dict:
+async def add_candle(candle_data: dict, currency: str, timeframe: str) -> dict | None:
+    # Get apropriate collection
     collection = get_collection(currency, timeframe)
+
+    # Check if there is already existed candlestick data for provided timestamp
+    n = await collection.find_one({'timestamp' : candle_data['timestamp']})
+    if n is not None:
+        return None
+
+    # Add to database
     candle = await collection.insert_one(candle_data)
+    
+    # Get already inserted document and return it
     new_candle = await collection.find_one({"_id": candle.inserted_id})
     return candle_helper(new_candle)

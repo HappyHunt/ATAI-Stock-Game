@@ -1,11 +1,11 @@
-def ResponseModel(data, message):
+def ResponseModel(data, message, code = 200):
     return {
         "data": data,
-        "code": 200,
+        "code": code,
         "message": message
     }
 
-def ErrorResponseModel(error, code, message):
+def ErrorResponseModel(error, message, code):
     return {
         "error": error,
         "code": code,
