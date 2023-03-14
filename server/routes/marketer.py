@@ -3,10 +3,11 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 
 from server.models.candle import CandlestickSchema, CandlestickSchemaList
-from server.models.crypto import Timeframe
+from server.models.crypto import IntervalKucoin
 from server.models.responses import ResponseModel, ErrorResponseModel
 from server.database.db import (
         add_candle,
+        add_many_candles
     )
 
 router_market = APIRouter()
@@ -23,7 +24,7 @@ async def root():
 @router_market.post("/market/candle/{currency}/{timeframe}", tags=["Market"],
                     response_description="Candlestick data added to database collection named ${currency}.{timeframe.name}",
                     status_code=status.HTTP_201_CREATED)
-async def add_single_candlestick_data(currency: str, timeframe: Timeframe, candle: CandlestickSchema = Body(...)):
+async def add_single_candlestick_data(currency: str, timeframe: IntervalKucoin, candle: CandlestickSchema = Body(...)):
     candle = jsonable_encoder(candle)
     new_candle = await add_candle(candle, currency, timeframe.name)
 
@@ -35,7 +36,7 @@ async def add_single_candlestick_data(currency: str, timeframe: Timeframe, candl
                             )
 
     return JSONResponse(ResponseModel(data=new_candle, 
-                                      message=f"Candlestick added succsessfully to collection {currency}.{timeframe.name}",
+                                      message=f"Candlestick added successfully to collection {currency}.{timeframe.name}",
                                       code=status.HTTP_201_CREATED),
                         status_code=status.HTTP_201_CREATED
                         )
@@ -44,24 +45,15 @@ async def add_single_candlestick_data(currency: str, timeframe: Timeframe, candl
 @router_market.post("/market/candles/{currency}/{timeframe}", tags=["Market"],
                     response_description="Candlesticks data added to database collection named ${currency}.{timeframe.name}",
                     status_code=status.HTTP_201_CREATED)
-async def add_multi_cadlestick_data(currency: str, timeframe: Timeframe, candles: CandlestickSchemaList = Body(...)):
-    new_candles = []
-    
-    for i in range(len(candles.candles)):
-        new_candle = await add_candle(jsonable_encoder(candles.candles[i]), currency, timeframe.name)
-        
-        if new_candle is not None:
-            new_candles.append(new_candle)
+async def add_many_candlestick_data(currency: str, timeframe: IntervalKucoin, candles: CandlestickSchemaList = Body(...)):
+    candles_list = []
+    for candle in candles.candles:
+        candles_list.append(candle.dict())
+    candles_list = jsonable_encoder(candles_list)
 
-    if len(new_candles) == 0:
-        return JSONResponse(ErrorResponseModel(error="",
-                                               message="All provided candlesticks data already exists.",
-                                               code=status.HTTP_406_NOT_ACCEPTABLE),
-                            status_code=status.HTTP_406_NOT_ACCEPTABLE
-                            )
-
-    return JSONResponse(ResponseModel(data=new_candles, 
-                                      message=f"{len(new_candles)} of {len(candles.candles)} candlesticks added succsessfully to collection {currency}.{timeframe.name}",
+    await add_many_candles(candles_list, currency, timeframe.name)
+    return JSONResponse(ResponseModel(data="",
+                                      message=f"{len(candles_list)} candlesticks added successfully to collection {currency}.{timeframe.name}",
                                       code=status.HTTP_201_CREATED),
                         status_code=status.HTTP_201_CREATED
                         )

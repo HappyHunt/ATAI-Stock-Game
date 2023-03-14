@@ -3,12 +3,12 @@ from pydantic import BaseModel, Field
 
 
 class CandlestickSchema(BaseModel):
-    timestamp : int = Field(..., gt=0)
-    entry_price : float = Field(..., gt=0)
-    highest_price : float = Field(..., gt=0)
+    timestamp: int = Field(..., gt=0)
+    entry_price: float = Field(..., gt=0)
+    highest_price: float = Field(..., gt=0)
     lowest_price: float = Field(..., gt=0)
-    close_price : float = Field(..., gt=0)
-    volume : int = Field(...)
+    close_price: float = Field(..., gt=0)
+    volume: float = Field(...)
 
     class Config:
         schema_extra = {
@@ -18,7 +18,7 @@ class CandlestickSchema(BaseModel):
                 "highest_price": 24366.0,
                 "lowest_price": 24337.0,
                 "close_price": 24364.0,
-                "volume": 70653,
+                "volume": 70653.0
             }
         }
 

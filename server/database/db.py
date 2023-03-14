@@ -42,9 +42,10 @@ def candle_helper(candle) -> dict:
         "volume": candle["volume"],
     }
 
+
 # *** Add ***
 async def add_candle(candle_data: dict, currency: str, timeframe: str) -> dict | None:
-    # Get apropriate collection
+    # Get appropriate collection
     collection = get_collection(currency, timeframe)
 
     # Check if there is already existed candlestick data for provided timestamp
@@ -58,3 +59,10 @@ async def add_candle(candle_data: dict, currency: str, timeframe: str) -> dict |
     # Get already inserted document and return it
     new_candle = await collection.find_one({"_id": candle.inserted_id})
     return candle_helper(new_candle)
+
+
+async def add_many_candles(candles_data: list, currency: str, timeframe: str) -> None:
+    # Get appropriate collection
+    collection = get_collection(currency, timeframe)
+
+    await collection.insert_many(candles_data)
