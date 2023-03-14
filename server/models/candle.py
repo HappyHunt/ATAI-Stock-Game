@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 
 
+
 class CandlestickSchema(BaseModel):
     timestamp : int = Field(..., gt=0)
     entry_price : float = Field(..., gt=0)

@@ -1,7 +1,8 @@
 import motor.motor_asyncio
 import configparser as cfg
 
-CONFIG_FILEPATH = '/home/bszyk/Projects/ATAI-Stock-Game/server/config.ini'
+
+CONFIG_FILEPATH = './server/config.ini'
 
 # Config handle
 #   * Open
@@ -24,7 +25,7 @@ client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DETAILS)
 database = client[DB_NAME]
 
 # *** Collections ***
-def get_collection(currency: str, timeframe: int):
+def get_collection(currency: str, timeframe: str):
     return database.get_collection(f'{currency}.{timeframe}')
 
 
@@ -41,7 +42,7 @@ def candle_helper(candle) -> dict:
     }
 
 # *** Add ***
-async def add_candle(candle_data: dict, currency: str, timeframe: int) -> dict:
+async def add_candle(candle_data: dict, currency: str, timeframe: str) -> dict:
     collection = get_collection(currency, timeframe)
     candle = await collection.insert_one(candle_data)
     new_candle = await collection.find_one({"_id": candle.inserted_id})

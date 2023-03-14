@@ -9,3 +9,7 @@ async def root():
     response = JSONResponse(content=content, 
                             status_code=status.HTTP_200_OK)
     return response
+
+@router_trade.get("/trader/candle/{currency}/{timeframe}", tags=["Trade"])
+async def get_candle_data(currency: str, timeframe: int, amount: int = 1):
+    return {"message": "Candlestick data will be stored here"}

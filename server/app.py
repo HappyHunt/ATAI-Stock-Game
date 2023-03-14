@@ -1,20 +1,21 @@
 import uvicorn
 from fastapi import FastAPI
 
-import database.db
-import routes.root as root
-import routes.trader as trader
-import routes.marketer as marketer
+import server.database.db
+import server.routes.root as root
+import server.routes.trader as trader
+import server.routes.marketer as marketer
+
+
+# API Init
+app = FastAPI()
+#   * Routers
+app.include_router(root.router_root)
+app.include_router(trader.router_trade)
+app.include_router(marketer.router_market)
 
 
 def main():
-    # API Init
-    app = FastAPI()
-    #   * Routers
-    app.include_router(root.router_root)
-    app.include_router(trader.router_trade)
-    app.include_router(marketer.router_market)
-
     uvicorn.run(app, host="0.0.0.0", port=8000)
 
 
