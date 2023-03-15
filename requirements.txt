@@ -28,3 +28,4 @@ websockets==10.4
 
 tqdm~=4.65.0
 motor~=3.1.1
+mplfinance~=0.12.9b7
