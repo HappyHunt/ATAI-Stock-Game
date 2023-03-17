@@ -1,3 +1,5 @@
+import time
+
 import motor.motor_asyncio
 import configparser as cfg
 
@@ -43,6 +45,9 @@ def candle_helper(candle) -> dict:
         "volume": candle["volume"],
     }
 
+# *** Time ***
+def get_timestamp():
+    return int(time.time()) * 1000
 
 # *** Add ***
 async def add_candle(candle_data: dict, currency: str, timeframe: str) -> dict | None:
@@ -69,7 +74,7 @@ async def add_many_candles(candles_data: list, currency: str, timeframe: str) ->
     await collection.insert_many(candles_data)
 
 
-async def find_many_candles(symbol, interval: str, start_time: int, end_time: int):
+async def find_many_candles(symbol, interval: str, start_time: int = get_timestamp() - 1209600000, end_time: int = get_timestamp()):
     result = []
     params = {
         'timestamp': {
@@ -88,3 +93,26 @@ async def find_many_candles(symbol, interval: str, start_time: int, end_time: in
     async for i in col.find(filter=params, sort=sort, projection=project):
         result.append(i)
     return result
+
+
+async def find_one_candle(symbol, interval: str, timestamp: int):
+    params = {
+        'timestamp': {
+            '$eq': timestamp
+        }
+    }
+    project = {
+        '_id': 0
+    }
+    col = get_collection(symbol, interval)
+    r = await col.find_one(filter=params, projection=project)
+    return r
+
+
+async def find_last_candle(symbol, interval: str):
+    project = {
+        '_id': 0
+    }
+    col = get_collection(symbol, interval)
+    r = await col.find_one(sort=[('timestamp', -1)], projection=project)
+    return r

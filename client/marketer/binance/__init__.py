@@ -9,7 +9,7 @@ from .utils import cleanNoneValue, encoded_string
 
 class Futures(object):
     def __init__(self):
-        self.base_url = "https://testnet.binancefuture.com"
+        self.base_url = "https://fapi.binance.com"
         self.session = requests.Session()
         return
 

@@ -8,5 +8,5 @@ class Charter(object):
         self.interval = interval
 
     def get_data(self):
-        data = my_requests.get_data_for_interval(self.symbol, self.interval, 1678440720000, 1678451520000)
+        data = my_requests.get_data_for_interval(self.symbol, self.interval, 1268743500000, 1678970700000)
         return data

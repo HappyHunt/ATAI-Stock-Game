@@ -1,19 +1,19 @@
 import sys
 import plotly.graph_objects as gr_obj
 import pandas as pd
-import mplfinance as mpf
 
 from datetime import datetime
 from chart.collect_data import Charter
 from server.models.crypto import IntervalBinance
 
-DATA_FILEPATH = './client/charter/data/BTCUSDT-1m-2023-03-13.csv'
-
 
 def main():
-    c = Charter('BTC', IntervalBinance.MIN1)
-
-    df = pd.DataFrame(c.get_data())
+    c = Charter('BTC', IntervalBinance.W1)
+    try:
+        df = pd.DataFrame(c.get_data())
+    except Exception as e:
+        print("Wystąpił błąd: ", e)
+        sys.exit(-1)
     # try:
     #     df = pd.read_csv(DATA_FILEPATH)
     #     print(f'{DATA_FILEPATH} : File opened successfully.')
@@ -34,28 +34,28 @@ def main():
     print('Done.')
 
     fig.show()
-    new_names = {
-        'timestamp': 'date',
-        'entry_price': 'open',
-        'highest_price': 'high',
-        'lowest_price': 'low',
-        'close_price': 'close',
-        'volume': 'volume',
-        # Add more mappings as needed
-    }
-    df = df.rename(columns=new_names)
-
-    for i in range(df['date'].size):
-        df['date'][i] = datetime.fromtimestamp(float(df['date'][i])/1000)
-    df = df.set_index('date')
-    df.head()
-
-    # Plot the chart with the specified style
-    mpf.plot(
-        df,
-        type='candle',
-        title='BTC',
-        ylabel='Price ($)')
+    # new_names = {
+    #     'timestamp': 'date',
+    #     'entry_price': 'open',
+    #     'highest_price': 'high',
+    #     'lowest_price': 'low',
+    #     'close_price': 'close',
+    #     'volume': 'volume',
+    #     # Add more mappings as needed
+    # }
+    # df = df.rename(columns=new_names)
+    #
+    # for i in range(df['date'].size):
+    #     df['date'][i] = datetime.fromtimestamp(float(df['date'][i])/1000)
+    # df = df.set_index('date')
+    # df.head()
+    #
+    # # Plot the chart with the specified style
+    # mpf.plot(
+    #     df,
+    #     type='candle',
+    #     title='BTC',
+    #     ylabel='Price ($)')
 
     sys.exit(0)
 

@@ -13,4 +13,5 @@ class Collector(object):
     # METHODS
     def collect_all(self):
         for i in IntervalBinance:
-            self.collect_candles(i, Stock.BINANCE)
+            if i is not IntervalBinance.MIN1:
+                self.collect_candles(i, Stock.BINANCE)
