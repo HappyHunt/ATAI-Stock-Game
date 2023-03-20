@@ -1,8 +1,7 @@
-import time
-
 import motor.motor_asyncio
 import configparser as cfg
 
+from server.utils import get_timestamp
 
 CONFIG_FILEPATH = './config.ini'
 
@@ -45,9 +44,6 @@ def candle_helper(candle) -> dict:
         "volume": candle["volume"],
     }
 
-# *** Time ***
-def get_timestamp():
-    return int(time.time()) * 1000
 
 # *** Add ***
 async def add_candle(candle_data: dict, currency: str, timeframe: str) -> dict | None:
@@ -61,7 +57,7 @@ async def add_candle(candle_data: dict, currency: str, timeframe: str) -> dict |
 
     # Add to database
     candle = await collection.insert_one(candle_data)
-    
+
     # Get already inserted document and return it
     new_candle = await collection.find_one({"_id": candle.inserted_id})
     return candle_helper(new_candle)
@@ -74,7 +70,8 @@ async def add_many_candles(candles_data: list, currency: str, timeframe: str) ->
     await collection.insert_many(candles_data)
 
 
-async def find_many_candles(symbol, interval: str, start_time: int = get_timestamp() - 1209600000, end_time: int = get_timestamp()):
+async def find_many_candles(symbol, interval: str, start_time: int = get_timestamp() - 1209600000,
+                            end_time: int = get_timestamp()):
     result = []
     params = {
         'timestamp': {
