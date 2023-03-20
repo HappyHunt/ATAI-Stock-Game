@@ -198,4 +198,5 @@ symbols_dict_kucoin = {
 symbols_dict_binance = {
     "BTC": "BTCUSDT",
     "ETH": "ETHUSDT",
+    "MATIC": "MATICUSDT",
 }

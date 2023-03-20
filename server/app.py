@@ -1,10 +1,10 @@
 import uvicorn
 from fastapi import FastAPI
 
-import server.database.db
 import server.routes.root as root
 import server.routes.trader as trader
 import server.routes.marketer as marketer
+import server.routes.client as charter
 
 
 # API Init
@@ -13,6 +13,7 @@ app = FastAPI()
 app.include_router(root.router_root)
 app.include_router(trader.router_trade)
 app.include_router(marketer.router_market)
+app.include_router(charter.router_client)
 
 
 def main():
